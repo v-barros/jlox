@@ -96,7 +96,16 @@ class Scanner {
                 if (match('/')) {
                     // A comment goes until the end of the line.
                     while (peek() != '\n' && !isAtEnd()) advance();
-                } else {
+                }else if(match('*')){
+                    //multiline comment
+                    while(!isAtEnd() && (peek()!='*' && peekNext()!='/')) advance();
+                    if(!isAtEnd()){
+                        advance();
+                        advance();
+                    }else
+                        Lox.error(line, "Unexpected character.");
+                }
+                else {
                     addToken(SLASH);
                 }
                 break;
@@ -165,8 +174,6 @@ class Scanner {
         String value = source.substring(start + 1, current - 1);
         addToken(STRING, value);
     }
-
-
 
     private boolean match(char expected) {
         if (isAtEnd()) return false;
